@@ -217,7 +217,7 @@ public class Take {
         /**
          * groupType : 0
          * resultType : text
-         * values : {"text":"叫我小婷就可以了"}
+         * values : {"text":"叫我小可爱就可以了"}
          */
 
         private int groupType;
@@ -250,7 +250,7 @@ public class Take {
 
         public static class ValuesBean {
             /**
-             * text : 叫我小婷就可以了
+             * text : 叫我小可爱就可以了
              */
 
             private String text;

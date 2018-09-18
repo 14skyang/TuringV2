@@ -61,7 +61,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
      * 加载列表布局数据
      */
     private void initData() {
-        Chat c1 = new Chat("你好，我叫小婷", Chat.TYPE_RECEIVED);
+        Chat c1 = new Chat("你好，我叫小可爱", Chat.TYPE_RECEIVED);
         list.add(c1);
         Chat c2 = new Chat("你好，你现在会些什么呢？", Chat.TYPE_SENT);
         list.add(c2);
@@ -137,11 +137,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 //       创建Retrofit对象
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl("http://openapi.tuling123.com/")//设置网络请求url，后面一段写在网络请求接口里面
-                .addConverterFactory(GsonConverterFactory.create())//Gson解析
+                .addConverterFactory(GsonConverterFactory.create())//Gson解析一句话就搞完了,Retrofit用Gson将返回体转换我们想要的类型。
                 .build();
-//       创建网络请求接口的实例
+//       创建网络请求接口的实例，这样才能调用接口
         Api api = retrofit.create(Api.class);
-//      Take为响应实体类，用来接受机器人返回的回复数据
+//      Take为响应实体类，用来接受机器人返回的回复数据，以下为接口调用
+        //// 用法和OkHttp的call如出一辙,
+        //// 不同的是如果是Android系统回调方法执行在主线程
         Call<Take> call = api.request(ask);
 //
         call.enqueue(new Callback<Take>() {

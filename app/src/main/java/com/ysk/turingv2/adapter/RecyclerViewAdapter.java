@@ -29,20 +29,20 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
     public RecyclerViewAdapter() {
 
     }
-
+//构造函数，因为在实例化一个类的时候 会执行构造函数里面的代码
     public RecyclerViewAdapter(Context context, List<Chat> list) {
         this.context = context;
         this.mlist = list;
     }
 
     @Override
-    public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {//加载基本布局
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.chat_item, parent, false);
         return new ViewHolder(view);
     }
 
     @Override
-    public void onBindViewHolder(ViewHolder holder, int position) {
+    public void onBindViewHolder(ViewHolder holder, int position) {//这里主要用于数据、事件绑定
         Chat chat = mlist.get(position);
         if (chat.getType() == Chat.TYPE_RECEIVED) {
 //           如果收的的数据是左边，就显示左边的消息布局，将右边的消息布局隐藏
@@ -64,7 +64,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
     }
 
     /**
-     * 声明控件
+     * 声明控件,自定义ViewHolder
      */
     class ViewHolder extends RecyclerView.ViewHolder {
         LinearLayout leftLayout;
