@@ -37,7 +37,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private Button mButton;
 
     //    对话信息集合
-    private List<Chat> list = new ArrayList<>();
+    private List<Chat> list = new ArrayList<>();//声明一个集合list来存储我们的聊天数据
 
     //    适配器
     private RecyclerViewAdapter recyclerViewAdapter;
@@ -50,10 +50,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         initView();
 //       加载数据
         initData();
-//      设置布局管理
+//      设置RecyclerView的布局管理器
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
         recyclerView.setLayoutManager(linearLayoutManager);
-        recyclerViewAdapter = new RecyclerViewAdapter(this, list);
+        recyclerViewAdapter = new RecyclerViewAdapter(this, list);//将集合数据填充到适配器中
         recyclerView.setAdapter(recyclerViewAdapter);
     }
 
@@ -127,17 +127,17 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private void request(String text) {
 //      把输入的文本数据存储在请求实体类中
         Ask ask = new Ask();
-        Ask.UserInfoBean info = new Ask.UserInfoBean();
+        Ask.UserInfoBean info = new Ask.UserInfoBean();//用户信息
         info.setApiKey("e54abcf09bb44bbd87966e9cc5367424");//将机器人的key值填入  c00282de107144fb940adab994d9ff98
         info.setUserId("319103");//将用户id填入  225167
         ask.setUserInfo(info);
-        Ask.PerceptionBean.InputTextBean pre = new Ask.PerceptionBean.InputTextBean(text);//将要发送给机器人书文本天趣
-        ask.setPerception(new Ask.PerceptionBean(pre));
+        Ask.PerceptionBean.InputTextBean pre = new Ask.PerceptionBean.InputTextBean(text);//将要发送给机器人的文本数据text的对象（就像遥控器）命名为pre
+        ask.setPerception(new Ask.PerceptionBean(pre));//???
 
 //       创建Retrofit对象
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl("http://openapi.tuling123.com/")//设置网络请求url，后面一段写在网络请求接口里面
-                .addConverterFactory(GsonConverterFactory.create())//Gson解析一句话就搞完了,Retrofit用Gson将返回体转换我们想要的类型。
+                .addConverterFactory(GsonConverterFactory.create())//Gson解析完成
                 .build();
 //       创建网络请求接口的实例，这样才能调用接口
         Api api = retrofit.create(Api.class);

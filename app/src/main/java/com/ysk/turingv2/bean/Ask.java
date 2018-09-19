@@ -1,7 +1,7 @@
 package com.ysk.turingv2.bean;
 
 /**
- * 描述: 发送数据实体类
+ * 描述: 发送数据实体类，根据发送给图灵api的json，使用GsonFormat工具生成请求数据实体类Ask(请求体)
  */
 
 public class Ask {

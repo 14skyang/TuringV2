@@ -8,7 +8,7 @@ import retrofit2.http.Body;
 import retrofit2.http.POST;
 
 /**
- * 描述: Retrofit接口
+ * 描述: Retrofit的实现接口
  */
 
 public interface Api {

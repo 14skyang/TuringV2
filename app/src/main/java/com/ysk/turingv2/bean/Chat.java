@@ -1,12 +1,13 @@
 package com.ysk.turingv2.bean;
 
 /**
- * 描述: 聊天消息实体类
+ * 描述: 聊天消息实体类，这个不是根据json数据来的
+ * 实体类有两个属性，用来标识是左边接受消息布局(TYPE_RECEIVED)还是右边布局的的type属性（TYPE_SENT）
  */
 
 public class Chat {
-    public static final int TYPE_RECEIVED = 0;
-    public static final int TYPE_SENT = 1;
+    public static final int TYPE_RECEIVED = 0;//接收的数据
+    public static final int TYPE_SENT = 1;//发送的数据
     //    对话文本
     private String text;
     //    标示

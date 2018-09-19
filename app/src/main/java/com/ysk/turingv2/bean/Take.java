@@ -3,7 +3,7 @@ package com.ysk.turingv2.bean;
 import java.util.List;
 
 /**
- * 描述: 接受的Json数据实体类
+ * 描述: 接收的Json数据实体类
  */
 
 public class Take {

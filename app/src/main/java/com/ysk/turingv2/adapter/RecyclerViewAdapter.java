@@ -24,7 +24,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
     private Context context;
 
     //    对话列表
-    private List<Chat> mlist;
+    private List<Chat> mlist;//创建集合mList，用来存储聊天数据
 
     public RecyclerViewAdapter() {
 
