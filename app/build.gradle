@@ -33,4 +33,5 @@ dependencies {
     implementation  'com.squareup.okhttp3:okhttp:3.1.2'
     implementation  'com.squareup.retrofit2:retrofit:2.0.1'
     implementation  'com.squareup.retrofit2:converter-gson:2.0.1'
+    implementation 'org.litepal.android:core:1.6.0'
 }

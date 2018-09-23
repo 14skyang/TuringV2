@@ -12,10 +12,22 @@ public class Chat {
     private String text;
     //    标示
     private int type;
+    private String time;
 
-    public Chat(String text, int type) {
+    public String getTime() {
+        return time;
+    }
+
+    public void setTime(String time) {
+        this.time = time;
+    }
+
+
+
+    public Chat(String text, int type,String time) {
         this.text = text;
         this.type = type;
+        this.time=time;
     }
 
     public String getText() {

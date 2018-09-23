@@ -19,7 +19,15 @@
         android:layout_gravity="center_vertical"
         android:gravity="center_vertical"
         android:orientation="horizontal">
-
+        <Button
+            android:id="@+id/btn_voice"
+            android:layout_width="66dp"
+            android:layout_height="36dp"
+            android:layout_margin="5dp"
+            android:background="#444444"
+            android:text="语音"
+            android:textColor="#FFFFFF"
+            />
         <EditText
             android:id="@+id/et_text"
             android:layout_width="match_parent"
