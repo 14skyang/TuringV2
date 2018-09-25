@@ -1,6 +1,7 @@
 package com.ysk.turingv2;
 
 import android.Manifest;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.support.v4.app.ActivityCompat;
@@ -39,6 +40,7 @@ import com.ysk.turingv2.util.L;
 
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.litepal.LitePal;
 import org.litepal.crud.DataSupport;
 import org.litepal.tablemanager.Connector;
 
@@ -71,12 +73,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     //    适配器
     private RecyclerViewAdapter recyclerViewAdapter;
-
     
     private String text;//语音转文字的最终text
 
     private  String mText;//图灵机器人回复的最终text
 
+    private  String username;
 
     //以下是讯飞部分
     //语音按钮
@@ -94,6 +96,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             //检查是否授权，高版本手机必须有这个再次检查授权，否则会闪退
             ActivityCompat.requestPermissions(this,new String[]{Manifest.permission.RECORD_AUDIO},1);
         }
+        Intent intent = getIntent();//接收登录传值
+         username = intent.getStringExtra("userName");
 
        //数据库litepal建表
         Connector.getDatabase();
@@ -481,19 +485,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     /**
      * 数据库保存聊天记录方法
      */
-   /* public void updateData(){
-        ChatHistory chatHistory=new ChatHistory();
-        chatHistory.setTime(getCurrentTime());
-        chatHistory.setSendText(text);//发送的text
-        chatHistory.setReceiveText(mText);//接收图灵发的text
-        chatHistory.updateAll();
-    }*/
 
     public void saveSendData(){//保存发送的数据
         ChatHistory chatHistory=new ChatHistory();
         chatHistory.setTime(getCurrentTime());
         chatHistory.setType(ChatHistory.TYPE_SENT);
         chatHistory.setChattext(text);//发送的text
+        chatHistory.setUsername(username);
         chatHistory.save();
 
     }
@@ -502,6 +500,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         chatHistory.setTime(getCurrentTime());
         chatHistory.setType(ChatHistory.TYPE_RECEIVED);
         chatHistory.setChattext(mText);//收到的mText
+        chatHistory.setUsername(username);
         chatHistory.save();
 
     }
@@ -509,7 +508,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     //写入聊天记录
     public void initMsg(){
 
-        List<ChatHistory> chatHistoryList=DataSupport.order("time asc").find(ChatHistory.class);//asc表升序
+        List<ChatHistory> chatHistoryList= LitePal.where("username=?",username)
+                                             .order("time asc").find(ChatHistory.class);//asc表升序
 
         for (ChatHistory chatHistory:chatHistoryList){
             if(chatHistory.getType()==1){//发送的消息

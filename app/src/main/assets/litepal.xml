@@ -4,5 +4,6 @@
     <version value="1"></version>
     <list>
         <mapping class="com.ysk.turingv2.bean.ChatHistory"></mapping>
+        <mapping class="com.ysk.turingv2.bean.User"></mapping>
     </list>
 </litepal>
