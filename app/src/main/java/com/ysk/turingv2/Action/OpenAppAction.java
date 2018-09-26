@@ -1,4 +1,4 @@
-package com.ysk.turingv2;
+package com.ysk.turingv2.Action;
 
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -6,7 +6,7 @@ import android.content.pm.ResolveInfo;
 import android.net.Uri;
 import android.util.Log;
 
-import com.ysk.turingv2.adapter.RecyclerViewAdapter;
+import com.ysk.turingv2.Activity.MainActivity;
 import com.ysk.turingv2.bean.Chat;
 
 import java.util.List;

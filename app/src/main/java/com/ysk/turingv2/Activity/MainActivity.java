@@ -1,8 +1,7 @@
-package com.ysk.turingv2;
+package com.ysk.turingv2.Activity;
 
 import android.Manifest;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
@@ -29,6 +28,9 @@ import com.iflytek.cloud.SpeechUtility;
 import com.iflytek.cloud.SynthesizerListener;
 import com.iflytek.cloud.ui.RecognizerDialog;
 import com.iflytek.cloud.ui.RecognizerDialogListener;
+import com.ysk.turingv2.Action.CallAction;
+import com.ysk.turingv2.Action.OpenAppAction;
+import com.ysk.turingv2.R;
 import com.ysk.turingv2.adapter.RecyclerViewAdapter;
 import com.ysk.turingv2.bean.Ask;
 import com.ysk.turingv2.bean.Chat;
@@ -41,7 +43,6 @@ import com.ysk.turingv2.util.L;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.litepal.LitePal;
-import org.litepal.crud.DataSupport;
 import org.litepal.tablemanager.Connector;
 
 import java.text.SimpleDateFormat;
@@ -50,6 +51,8 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -74,9 +77,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     //    适配器
     private RecyclerViewAdapter recyclerViewAdapter;
     
-    private String text;//语音转文字的最终text
+    public String text;//语音转文字的最终text
 
-    private  String mText;//图灵机器人回复的最终text
+    public  String mText;//图灵机器人回复的最终text
 
     private  String username;
 
@@ -88,6 +91,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private HashMap<String, String> mIatResults = new LinkedHashMap<String , String>();
     //打开app
     private String appName;
+    //打电话 发短信
+    private String person;
+    private String number;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -96,6 +102,15 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             //检查是否授权，高版本手机必须有这个再次检查授权，否则会闪退
             ActivityCompat.requestPermissions(this,new String[]{Manifest.permission.RECORD_AUDIO},1);
         }
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.CALL_PHONE)!= PackageManager.PERMISSION_GRANTED) {
+            //检查是否授权，高版本手机必须有这个再次检查授权，否则会闪退
+            ActivityCompat.requestPermissions(this,new String[]{Manifest.permission.CALL_PHONE},1);
+        }
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_CONTACTS)!= PackageManager.PERMISSION_GRANTED) {
+            //检查是否授权，高版本手机必须有这个再次检查授权，否则会闪退
+            ActivityCompat.requestPermissions(this,new String[]{Manifest.permission.READ_CONTACTS},1);
+        }
+
         Intent intent = getIntent();//接收登录传值
          username = intent.getStringExtra("userName");
 
@@ -137,14 +152,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
      * 加载列表布局数据
      */
     private void initData() {
-        Chat c1 = new Chat("你好，我叫小可爱", Chat.TYPE_RECEIVED,getCurrentTime());
+        Chat c1 = new Chat("你好，我叫小可爱,你可以跟我聊天，也可以说：打开某某应用，打电话给某人", Chat.TYPE_RECEIVED,getCurrentTime());
         list.add(c1);
+        speakText("你好，我叫小可爱,你可以跟我聊天，也可以说：打开某某应用，打电话给某人");
        /* Chat c2 = new Chat("你好，你现在会些什么呢？", Chat.TYPE_SENT);
-        list.add(c2);
-        Chat c3 = new Chat("我还在成长中，很多东西还不懂，但是你可以考考我", Chat.TYPE_RECEIVED);
-        list.add(c3);
-        Chat c4 = new Chat("1+1等于几?", Chat.TYPE_RECEIVED);
-        list.add(c4);*/
+        list.add(c2);*/
 
     }
 
@@ -170,16 +182,18 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                  * 3，发送后清空当前的输入框
                  */
 //              1,获取输入框的内容
-                String text = editText.getText().toString();
+                 text = editText.getText().toString();
 //              2,判断是否为空
                 if (!TextUtils.isEmpty(text)) {
 //                  把要发送的数据添加到addData方法中，并把数据类型也填入，这里我们的类型是TYPE_SENT，发送数据类型
                     addData(text, Chat.TYPE_SENT,getCurrentTime());
                     saveSendData();//保存发送数据
-//                  清空输入框
+//                      清空输入框
                     editText.setText("");
 //                  把发送的文本数据传递到request方法中，请求数据
                     request(text);//图灵请求数据
+                    Log.e(TAG, "图灵请求文本："+text );
+
                 }
                 break;
             case R.id.btn_voice:
@@ -356,13 +370,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
             String result = results.getResultString(); //未解析的
           //  showTip(result) ;
-            Log.e(TAG, "没有解析的："+result);
+          //  Log.e(TAG, "没有解析的："+result);
 
             text = JsonParser.parseIatResult(result) ;//解析过后的text
 
             text = text.replaceAll("\\p{P}", "a");//把解析后的text中所有标点符号换成a
 
-
+            Log.e(TAG, "解析后的text："+text);
             String sn = null;
             // 读取json结果中的 sn字段
             try {
@@ -378,8 +392,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             for (String key : mIatResults.keySet()) {
                 resultBuffer.append(mIatResults .get(key));
             }
+            //现在有的问题是：讯飞识别后会识别出两个text,一个是文字，一个是单个标点符号，现在把标点符号一律换成a，去掉标点符号的text
             if (text.contains("a")){
-                return;//如果text含有a,就退出这个text的操作，舍弃掉这个text
+                return;//如果text含有a,舍弃掉这个text，返回null到调用该方法的地方，下面的代码不会得到执行,而不含标点符号的text会执行下面的代码
             } else if (text.contains("打开")){//打开app部分
                 int num = text.indexOf("打开");
                 appName = text.substring(num + 2, text.length());//截取打开后面的字符串
@@ -388,8 +403,22 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 addData(text, Chat.TYPE_SENT,getCurrentTime());//装配语音文字到发送文本框
                 saveSendData();//保存发送的数据
 
-            }else{
-                request(resultBuffer.toString());//语音转文字过后发送图灵问答请求
+            }else if (text.contains("打电话给")){
+                int num=text.indexOf("打电话给");
+                person=text.substring(num+4,text.length());//截取“打电话给”后面的字符串
+                 if (isNumeric(person)){//如果截取到的person字符串全是数字
+                   number=person;
+                 }
+                call();
+                addData(text,Chat.TYPE_SENT,getCurrentTime());//装配语音文字到发送文本框
+                saveSendData();//保存发送的数据
+                //初始化person和number
+                person=null;
+                number=null;
+            }
+
+            else{
+                request(text);//语音转文字过后发送图灵问答请求(resultBuffer.toString())
                 addData(text, Chat.TYPE_SENT,getCurrentTime());//装配语音文字到发送文本框
                 saveSendData();//保存发送的数据
             }
@@ -481,7 +510,23 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         OpenAppAction openAppAction = new OpenAppAction(MainActivity.this, appName);
         openAppAction.start();
     }
+    /*
+    *用于打电话
+     */
+    private void call(){
+        CallAction callAction=new CallAction(person,number,MainActivity.this);
+        callAction.start();
+    }
 
+    //判断字符串是否全是数字
+    public boolean isNumeric(String str){
+        Pattern pattern = Pattern.compile("[0-9]*");
+        Matcher isNum = pattern.matcher(str);
+        if( !isNum.matches() ){
+            return false;
+        }
+        return true;
+    }
     /**
      * 数据库保存聊天记录方法
      */
@@ -520,6 +565,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             if (chatHistory.getType()==0){//接收的消息
                 Chat c2 = new Chat(chatHistory.getChattext(), ChatHistory.TYPE_RECEIVED,chatHistory.getTime());
                 list.add(c2);
+
             }
 
         }

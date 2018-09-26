@@ -1,4 +1,4 @@
-package com.ysk.turingv2;
+package com.ysk.turingv2.Activity;
 
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
@@ -8,7 +8,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
-import com.ysk.turingv2.bean.ChatHistory;
+import com.ysk.turingv2.R;
 import com.ysk.turingv2.bean.User;
 
 import org.litepal.LitePal;
