@@ -3,4 +3,16 @@
     <color name="colorPrimary">#3F51B5</color>
     <color name="colorPrimaryDark">#303F9F</color>
     <color name="colorAccent">#FF4081</color>
+    <color name="writepage">#f0f0f0</color>
+    <color name="alpwritepage">#e0f0f0f0</color>
+    <color name="textColor">#cdcdcd</color>
+
+    <color name="text_background">#ffffffff</color>
+    <color name="skin_layout_toolbar">#5668de</color>
+
+    <color name="background">#f2f4f5</color>
+    <color name="text_color">#ff333333</color>
+    <color name="text_color_tip">#ce3d3a</color>
+
+    <color name="textColorPrimary">#ff333333</color>
 </resources>

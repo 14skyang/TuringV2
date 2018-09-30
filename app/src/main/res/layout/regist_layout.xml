@@ -3,6 +3,7 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@drawable/loginbg"
     >
     <ImageView
         android:layout_width="wrap_content"
@@ -91,6 +92,7 @@
         android:textSize="20dip"
         android:text="确定"
         android:id="@+id/YES"
+        android:background="@drawable/buttonbg"
         android:layout_centerVertical="true"
         android:layout_alignLeft="@+id/user_password"
         android:layout_alignStart="@+id/user_password"
@@ -102,7 +104,7 @@
         android:id="@+id/NO"
         android:textSize="20dip"
         android:text="取消"
-
+        android:background="@drawable/buttonbg"
         android:layout_alignBaseline="@+id/YES"
         android:layout_alignBottom="@+id/YES"
         android:layout_alignRight="@+id/password"

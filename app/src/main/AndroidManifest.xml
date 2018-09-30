@@ -17,27 +17,28 @@
     <application
         android:name="org.litepal.LitePalApplication"
         android:allowBackup="true"
-        android:icon="@mipmap/ic_launcher"
+        android:icon="@mipmap/logo1"
         android:label="@string/app_name"
-        android:roundIcon="@mipmap/ic_launcher_round"
+        android:roundIcon="@mipmap/logo2"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-
-        <activity android:name=".Activity.LoginActivity"
+        <activity
+            android:name=".Activity.LoginActivity"
             android:launchMode="singleTask"
-            >
+            android:label="小可爱机器人">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".Activity.MainActivity"
-            android:launchMode="singleTask"
-            />
-        <activity android:name=".Activity.RegistActivity"
-            android:launchMode="singleTask"
-            />
+        <activity
+            android:name=".Activity.MainActivity"
+            android:launchMode="singleTask" />
+        <activity
+            android:name=".Activity.RegistActivity"
+            android:launchMode="singleTask" />
+        <activity android:name=".Activity.SettingActivity"></activity>
     </application>
 
 </manifest>

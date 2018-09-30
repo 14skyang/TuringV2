@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/text_background"
+    android:orientation="vertical">
+
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:background="?attr/colorPrimary"
+        android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
+        app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
+        />
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+
+        <ImageView
+            android:id="@+id/h_background"
+            android:layout_width="match_parent"
+            android:layout_height="155dp" />
+
+        <ImageView
+            android:id="@+id/h_head"
+            android:layout_width="80dp"
+            android:layout_height="80dp"
+            android:layout_centerInParent="true" />
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignBottom="@id/h_background"
+            android:layout_marginBottom="20dp"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/user_name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentTop="true"
+                android:layout_centerHorizontal="true"
+                android:text=""
+
+                android:textSize="17sp" />
+
+        </RelativeLayout>
+
+    </RelativeLayout>
+
+    <com.ysk.turingv2.animation.ItemView
+        android:id="@+id/nickName"
+        android:layout_width="wrap_content"
+        android:layout_height="50dp"
+        app:left_icon="@drawable/ic_nick_name"
+        app:left_text="用户名"
+        app:right_text="张三"
+        />
+
+    <com.ysk.turingv2.animation.ItemView
+        android:id="@+id/voice"
+        android:layout_width="wrap_content"
+        android:layout_height="50dp"
+        app:left_icon="@drawable/ic_sex"
+        app:left_text="设置发音人"
+        app:right_text="可以在这选择方言"
+        />
+
+    <com.ysk.turingv2.animation.ItemView
+        android:id="@+id/allcustom"
+        android:layout_width="wrap_content"
+        android:layout_height="50dp"
+        app:left_icon="@drawable/ic_phone"
+        app:left_text="管理语料库"
+        app:right_text="管理您设置的所有问答"
+        />
+
+    <com.ysk.turingv2.animation.ItemView
+        android:id="@+id/pass"
+        android:layout_marginTop="15dp"
+        android:layout_width="wrap_content"
+        android:layout_height="50dp"
+        app:left_icon="@drawable/ic_pass"
+        app:left_text="修改密码"
+        app:right_text="修改您的登陆密码" />
+
+
+    <com.ysk.turingv2.animation.ItemView
+        android:id="@+id/robot_custom"
+        android:layout_width="wrap_content"
+        android:layout_height="50dp"
+        app:left_icon="@drawable/ic_phone"
+        app:left_text="自定义语料库"
+        app:right_text="设置专属聊天方式" />
+    <com.ysk.turingv2.animation.ItemView
+        android:id="@+id/about"
+        android:layout_width="wrap_content"
+        android:layout_height="50dp"
+        app:left_icon="@drawable/ic_about"
+        app:left_text="关于"
+        app:right_text="关于本应用" />
+
+</LinearLayout>

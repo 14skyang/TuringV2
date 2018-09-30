@@ -14,7 +14,7 @@ import com.ysk.turingv2.bean.Chat;
 import java.util.List;
 
 /**
- * 描述: 聊天布局适配器
+ * 描述: 聊天布局适配器，参考郭神第一行代码
  */
 
 public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapter.ViewHolder> {

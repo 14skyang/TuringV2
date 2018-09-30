@@ -33,7 +33,7 @@
             android:background="@drawable/chat_bg_cloud"
             android:gravity="center_vertical"
             android:padding="20dp"
-            android:text="你好，我叫小婷"
+            android:text="你好，我叫小可爱"
             android:textColor="@android:color/white" />
     </LinearLayout>
 

@@ -9,12 +9,17 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.util.Log;
+import android.view.KeyEvent;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
+
 
 import com.iflytek.cloud.ErrorCode;
 import com.iflytek.cloud.InitListener;
@@ -35,6 +40,7 @@ import com.ysk.turingv2.adapter.RecyclerViewAdapter;
 import com.ysk.turingv2.bean.Ask;
 import com.ysk.turingv2.bean.Chat;
 import com.ysk.turingv2.bean.ChatHistory;
+import com.ysk.turingv2.bean.Custom;
 import com.ysk.turingv2.bean.Take;
 import com.ysk.turingv2.net.Api;
 import com.ysk.turingv2.util.JsonParser;
@@ -84,6 +90,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private  String username;
 
     //以下是讯飞部分
+    private SpeechSynthesizer mTts;
+    //发音人
+    private String mSpeaker;
     //语音按钮
     private Button vButton;
     private static final String TAG = MainActivity.class .getSimpleName();
@@ -94,10 +103,15 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     //打电话 发短信
     private String person;
     private String number;
+    //自定义话术
+    private String question;
+    private String answer;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        Toolbar toolbar=(Toolbar)findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.RECORD_AUDIO)!= PackageManager.PERMISSION_GRANTED) {
             //检查是否授权，高版本手机必须有这个再次检查授权，否则会闪退
             ActivityCompat.requestPermissions(this,new String[]{Manifest.permission.RECORD_AUDIO},1);
@@ -114,7 +128,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         Intent intent = getIntent();//接收登录传值
          username = intent.getStringExtra("userName");
 
-       //数据库litepal建表
+       //连接数据库litepal
         Connector.getDatabase();
        //写入聊天记录
         initMsg();
@@ -122,16 +136,35 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         initSpeech() ;
 //      初始化数据
         initView();
-//       加载数据
-        initData();
+
 //      设置RecyclerView的布局管理器
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
         recyclerView.setLayoutManager(linearLayoutManager);
         recyclerViewAdapter = new RecyclerViewAdapter(this, list);//将集合数据填充到适配器中
         recyclerView.setAdapter(recyclerViewAdapter);
-
+//       加载数据
+        initData();
 
     }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.toolbar,menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch(item.getItemId()){
+            case R.id.setting:
+                Intent intent=new Intent(MainActivity.this,SettingActivity.class);
+                startActivityForResult(intent,1);
+                break;
+                default:
+        }
+        return true;
+    }
+
     /**
      * @return 获取聊天的当前时间
      */
@@ -152,8 +185,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
      * 加载列表布局数据
      */
     private void initData() {
-        Chat c1 = new Chat("你好，我叫小可爱,你可以跟我聊天，也可以说：打开某某应用，打电话给某人", Chat.TYPE_RECEIVED,getCurrentTime());
-        list.add(c1);
+        addData("你好，我叫小可爱,你可以跟我聊天，也可以说：打开某某应用，打电话给某人", Chat.TYPE_RECEIVED,getCurrentTime());
+        /*Chat c1 = new Chat("你好，我叫小可爱,你可以跟我聊天，也可以说：打开某某应用，打电话给某人", Chat.TYPE_RECEIVED,getCurrentTime());
+        list.add(c1);*/
         speakText("你好，我叫小可爱,你可以跟我聊天，也可以说：打开某某应用，打电话给某人");
        /* Chat c2 = new Chat("你好，你现在会些什么呢？", Chat.TYPE_SENT);
         list.add(c2);*/
@@ -224,7 +258,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
      * @param text 输入框的发送数据
      */
     private void request(String text) {
-//      把输入的文本数据存储在请求实体类中
+//      把输入的文本数据存储在请求实体类中，赋予了各个字段的数据
         Ask ask = new Ask();
         Ask.UserInfoBean info = new Ask.UserInfoBean();//用户信息
         info.setApiKey("e54abcf09bb44bbd87966e9cc5367424");//将机器人的key值填入  c00282de107144fb940adab994d9ff98
@@ -236,17 +270,17 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 //       创建Retrofit对象
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl("http://openapi.tuling123.com/")//设置网络请求url，后面一段写在网络请求接口里面
-                .addConverterFactory(GsonConverterFactory.create())//Gson解析完成
+                .addConverterFactory(GsonConverterFactory.create())//添加Gson支持，然后Retrofit就会使用Gson将响应体（api接口的Take）转换我们想要的类型。
                 .build();
 //       创建网络请求接口的实例，这样才能调用接口
         Api api = retrofit.create(Api.class);
 //      Take为响应实体类，用来接受机器人返回的回复数据，以下为接口调用
         //// 用法和OkHttp的call如出一辙,
         //// 不同的是如果是Android系统回调方法执行在主线程
-        Call<Take> call = api.request(ask);
-//
+        Call<Take> call = api.request(ask);//ask在前面赋予了各个字段的数据，在接口api中转成了json格式的数据，发送请求
+////发送网络请求(异步)
         call.enqueue(new Callback<Take>() {
-            //          请求成功
+            //         请求成功
             @Override
             public void onResponse(Call<Take> call, Response<Take> response) {
 //              接受到的机器人回复的数据
@@ -277,10 +311,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
     public void speakText(String s) {   //读文本
         //1. 创建 SpeechSynthesizer 对象 , 第二个参数： 本地合成时传 InitListener
-        SpeechSynthesizer mTts = SpeechSynthesizer.createSynthesizer( this, null);
+         mTts = SpeechSynthesizer.createSynthesizer( this, null);
 //2.合成参数设置，详见《 MSC Reference Manual》 SpeechSynthesizer 类
 //设置发音人（更多在线发音人，用户可参见 附录 13.2
-        mTts.setParameter(SpeechConstant. VOICE_NAME, "xiaoqi" ); // 设置发音人
+        //mTts.setParameter(SpeechConstant. VOICE_NAME, "xiaoqi" ); // 设置发音人
         mTts.setParameter(SpeechConstant. SPEED, "50" );// 设置语速
         mTts.setParameter(SpeechConstant. VOLUME, "80" );// 设置音量，范围 0~100
         mTts.setParameter(SpeechConstant. ENGINE_TYPE, SpeechConstant. TYPE_CLOUD); //设置云端
@@ -395,7 +429,15 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             //现在有的问题是：讯飞识别后会识别出两个text,一个是文字，一个是单个标点符号，现在把标点符号一律换成a，去掉标点符号的text
             if (text.contains("a")){
                 return;//如果text含有a,舍弃掉这个text，返回null到调用该方法的地方，下面的代码不会得到执行,而不含标点符号的text会执行下面的代码
-            } else if (text.contains("打开")){//打开app部分
+            } /*else if (checkQuestion(text)){
+                readCustom(text);
+                addData(question, Chat.TYPE_SENT,getCurrentTime());//装配语音文字到发送文本框
+                //saveSendData();//保存发送的数据
+                addData(answer, Chat.TYPE_RECEIVED,getCurrentTime());//装配语音文字到接收文本框
+               // saveReceiveData();//保存接收的数据
+                speakText(answer);
+
+            }*/ else if (text.contains("打开")){//打开app部分
                 int num = text.indexOf("打开");
                 appName = text.substring(num + 2, text.length());//截取打开后面的字符串
                 Log.e("appName", appName);
@@ -503,6 +545,25 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private void showTip (String data) {
         Toast.makeText( this, data, Toast.LENGTH_SHORT).show() ;
     }
+
+    /*
+    **接收设置活动返回的数据
+     */
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {//请求码为1，在主活动跳转设置活动的intent里设置startActivityForResult写明请求码
+        switch (requestCode) {
+            case 1:
+                if (resultCode == RESULT_OK) {
+                    mSpeaker = data.getStringExtra("speaker");
+                    Log.e(TAG, "发音人: "+mSpeaker);
+                    mTts.setParameter(SpeechConstant.VOICE_NAME, mSpeaker); // 设置发音人
+                }
+                break;
+            default:
+        }
+    }
+
     /**
      * 用于打开应用
      */
@@ -570,6 +631,57 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         }
 
+    }
+
+    //自定义话术部分
+    /**
+     * 检测数据库中是否存在该问题  ,此处查询不到符合的就会闪退？
+     */
+    /*public boolean checkQuestion(String question){ //有则返回true,没有就返回false
+        List<Custom>customList= LitePal.where("sendtext=?",question).find(Custom.class);//只查询设置的发的消息
+        for(Custom custom:customList){
+            if (question.equals(custom.getSendtext())){
+                return true;
+            }
+        }
+        return false;
+    }
+    *//**
+     * 从数据库中取出与所说的话对应的答案
+     *//*
+    private void readCustom(String q){
+        List<Custom>customList= LitePal.where("sendtext=?",q).find(Custom.class);//只查询设置的发的消息
+        answer=customList.get(1).toString();//把这个获取的customList表的第2列列数据取出，这就是回答
+        question=customList.get(2).toString();//把这个获取的customList表的第3列数据取出，这就是问题
+    }*/
+
+    /**
+     * 双击退出
+     *
+     * @param keyCode
+     * @param event
+     * @return
+     */
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        if (keyCode == KeyEvent.KEYCODE_BACK) {
+            exit();
+        }
+
+        return false;
+    }
+
+    private long time = 0;
+
+    public void exit() {
+        if (System.currentTimeMillis() - time > 2000) {
+            time = System.currentTimeMillis();
+            showTip("再点击一次退出应用程序");
+        } else {
+            Log.e(TAG, "结束");
+            finish();
+            System.exit(0);//杀死进程
+        }
     }
 
 }
