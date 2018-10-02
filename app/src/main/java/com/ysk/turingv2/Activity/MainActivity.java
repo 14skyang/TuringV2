@@ -158,6 +158,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         switch(item.getItemId()){
             case R.id.setting:
                 Intent intent=new Intent(MainActivity.this,SettingActivity.class);
+                //传递用户名到主活动
+                String USERNAME = username;
+                intent.putExtra("userName", USERNAME);
                 startActivityForResult(intent,1);
                 break;
                 default:
@@ -429,15 +432,16 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             //现在有的问题是：讯飞识别后会识别出两个text,一个是文字，一个是单个标点符号，现在把标点符号一律换成a，去掉标点符号的text
             if (text.contains("a")){
                 return;//如果text含有a,舍弃掉这个text，返回null到调用该方法的地方，下面的代码不会得到执行,而不含标点符号的text会执行下面的代码
-            } /*else if (checkQuestion(text)){
+            } else if (checkQuestion(text)){
                 readCustom(text);
-                addData(question, Chat.TYPE_SENT,getCurrentTime());//装配语音文字到发送文本框
-                //saveSendData();//保存发送的数据
+                addData(text, Chat.TYPE_SENT,getCurrentTime());//装配语音文字到发送文本框
+                saveSendData();//保存发送的数据
                 addData(answer, Chat.TYPE_RECEIVED,getCurrentTime());//装配语音文字到接收文本框
-               // saveReceiveData();//保存接收的数据
+                mText=answer;
+               saveReceiveData();//保存接收的数据
                 speakText(answer);
 
-            }*/ else if (text.contains("打开")){//打开app部分
+            } else if (text.contains("打开")){//打开app部分
                 int num = text.indexOf("打开");
                 appName = text.substring(num + 2, text.length());//截取打开后面的字符串
                 Log.e("appName", appName);
@@ -637,23 +641,29 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     /**
      * 检测数据库中是否存在该问题  ,此处查询不到符合的就会闪退？
      */
-    /*public boolean checkQuestion(String question){ //有则返回true,没有就返回false
+    public boolean checkQuestion(String question){ //有则返回true,没有就返回false
         List<Custom>customList= LitePal.where("sendtext=?",question).find(Custom.class);//只查询设置的发的消息
-        for(Custom custom:customList){
-            if (question.equals(custom.getSendtext())){
-                return true;
+        if (customList!=null&&customList.size()!=0) {
+            for (Custom custom : customList) {
+                if (question.equals(custom.getSendtext())) {
+                    return true;
+                }
             }
         }
         return false;
     }
-    *//**
+    /**
      * 从数据库中取出与所说的话对应的答案
-     *//*
+     */
     private void readCustom(String q){
-        List<Custom>customList= LitePal.where("sendtext=?",q).find(Custom.class);//只查询设置的发的消息
-        answer=customList.get(1).toString();//把这个获取的customList表的第2列列数据取出，这就是回答
-        question=customList.get(2).toString();//把这个获取的customList表的第3列数据取出，这就是问题
-    }*/
+        List<Custom>customList= LitePal.select("Receivetext")
+                .where("sendtext=?",q).find(Custom.class);//设置指定查询Receivetext列，并且条件是sendtext=q的那一行
+        for(Custom custom:customList){
+            answer=custom.getReceivetext();//遍历数据表取出答案
+        }
+
+
+    }
 
     /**
      * 双击退出

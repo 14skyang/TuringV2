@@ -22,6 +22,7 @@ import android.widget.Toast;
 import com.ysk.turingv2.R;
 import com.ysk.turingv2.animation.ItemView;
 import com.ysk.turingv2.bean.Custom;
+import com.ysk.turingv2.bean.User;
 
 import org.litepal.LitePal;
 import org.litepal.tablemanager.Connector;
@@ -59,7 +60,7 @@ public class SettingActivity extends AppCompatActivity implements View.OnClickLi
     private String rConfirmPass;
 
     //用于存储用户名等
-
+    private String username;
     //设置发音人
     private String speaker;
     @Override
@@ -71,14 +72,14 @@ public class SettingActivity extends AppCompatActivity implements View.OnClickLi
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setHomeButtonEnabled(true);//默认左上角生成返回按钮
         toolbar.setTitle("应用设置");
-        /*//获取传递过来的用户名
-        Intent intent = getIntent();
-        data = intent.getStringExtra("data");*/
+        //获取传递过来的用户名
+        Intent intent = getIntent();//接收登录传值
+        username = intent.getStringExtra("userName");
         //连接数据库
         Connector.getDatabase();
         initLayout();
-        mUserName.setText("张三丰");
-        mNickName.setRightDesc("张三丰");//右侧描述文字
+        mUserName.setText(username);
+        mNickName.setRightDesc(username);//右侧描述文字
         mNickName.setOnClickListener(this);
         allRobotCustom.setOnClickListener(this);
         mPass.setOnClickListener(this);
@@ -288,8 +289,9 @@ public class SettingActivity extends AppCompatActivity implements View.OnClickLi
      * 更新数据库中的密码
      */
     private void updatePass(){
-
-     //
+        User user=new User();
+        user.setPassword(rNewPass);
+        user.updateAll("username=?",username);
     }
 
 
@@ -301,6 +303,7 @@ public class SettingActivity extends AppCompatActivity implements View.OnClickLi
         Custom custom=new Custom();
         custom.setSendtext(question);
         custom.setReceivetext(answer);
+        custom.setUsername(username);
         custom.save();
         //custom.setUsername();
         //保存到数据库
@@ -311,10 +314,12 @@ public class SettingActivity extends AppCompatActivity implements View.OnClickLi
      * 检测数据库中是否存在该问题
      */
     public boolean checkQuestion(String question){ //有则返回true,没有就返回false
-        List<Custom>customList= LitePal.where("sendtext=?",question).find(Custom.class);//只查询设置的发的消息
-        for(Custom custom:customList){
-            if (question.equals(custom.getSendtext())){
-                return true;
+        List<Custom>customList= LitePal.where("sendtext=? and username=?",question,username).find(Custom.class);//只查询设置的发的消息
+        if(customList!=null&&customList.size()!=0) {
+            for (Custom custom : customList) {
+                if (question.equals(custom.getSendtext())) {
+                    return true;
+                }
             }
         }
         return false;
@@ -325,8 +330,9 @@ public class SettingActivity extends AppCompatActivity implements View.OnClickLi
      */
     private void updateAnswer(String answer){ //在找到相同问题的前提下
         Custom custom=new Custom();
+        custom.setSendtext(rQuestion);
         custom.setReceivetext(answer);
-        custom.updateAll("sendtext",rQuestion);//更新sendtext=rQuestion的那一行
+        custom.updateAll("sendtext=? and username=?",rQuestion,username);//更新sendtext=rQuestion的那一行 参数要正确，不要漏问号
     }
     /**
      * 返回按钮在ToolBar中的点击事件
