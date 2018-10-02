@@ -27,12 +27,14 @@
         <ImageView
             android:id="@+id/h_background"
             android:layout_width="match_parent"
+            android:src="@drawable/settingbg2"
             android:layout_height="155dp" />
 
         <ImageView
             android:id="@+id/h_head"
             android:layout_width="80dp"
             android:layout_height="80dp"
+            android:src="@mipmap/logo2"
             android:layout_centerInParent="true" />
 
         <RelativeLayout

@@ -158,7 +158,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         switch(item.getItemId()){
             case R.id.setting:
                 Intent intent=new Intent(MainActivity.this,SettingActivity.class);
-                //传递用户名到主活动
+                //传递用户名到设置活动
                 String USERNAME = username;
                 intent.putExtra("userName", USERNAME);
                 startActivityForResult(intent,1);

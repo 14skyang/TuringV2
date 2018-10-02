@@ -38,18 +38,12 @@ public class SettingActivity extends AppCompatActivity implements View.OnClickLi
 
     private ItemView mNickName;
 
-    private ItemView allUserName;
     private ItemView allRobotCustom;
     private ItemView mPass;
     private ItemView robotCustom;
-    private ItemView robotName;
     private ItemView mAbout;
     private ItemView voice;
 
-    //用户名
-    private String data;
-    //用户设置的机器人姓名
-    private String mRobotName;
     //用户自定义的语料库
     private String rQuestion;
     private String rAnswer;
@@ -59,7 +53,7 @@ public class SettingActivity extends AppCompatActivity implements View.OnClickLi
     private String rNewPass;
     private String rConfirmPass;
 
-    //用于存储用户名等
+    //用户名
     private String username;
     //设置发音人
     private String speaker;
@@ -305,7 +299,6 @@ public class SettingActivity extends AppCompatActivity implements View.OnClickLi
         custom.setReceivetext(answer);
         custom.setUsername(username);
         custom.save();
-        //custom.setUsername();
         //保存到数据库
     }
 
@@ -344,7 +337,6 @@ public class SettingActivity extends AppCompatActivity implements View.OnClickLi
             Log.e(TAG, "点击了返回键 " );
             //返回这里获取的数据给上一个活动，即主活动
             Intent intent1 = new Intent(SettingActivity.this,MainActivity.class);
-            //intent1.putExtra("mRobotName", mRobotName);
             // intent1.putExtra("rQuestion", rQuestion);
             //intent1.putExtra("rAnswer", rAnswer);
             intent1.putExtra("speaker", speaker);//发音人
@@ -362,9 +354,6 @@ public class SettingActivity extends AppCompatActivity implements View.OnClickLi
     public void onBackPressed() {
 
         Intent intent=new Intent(SettingActivity.this,MainActivity.class);
-        /*intent.putExtra("mRobotName",mRobotName);
-        intent.putExtra("rQuestion", rQuestion);
-        intent.putExtra("rAnswer", rAnswer);*/
         intent.putExtra("speaker", speaker);
         Log.e(TAG, "发音人："+speaker);
         setResult(RESULT_OK,intent);
