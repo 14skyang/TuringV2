@@ -51,7 +51,6 @@
                 android:layout_alignParentTop="true"
                 android:layout_centerHorizontal="true"
                 android:text=""
-
                 android:textSize="17sp" />
 
         </RelativeLayout>
@@ -81,10 +80,9 @@
         android:layout_width="wrap_content"
         android:layout_height="50dp"
         app:left_icon="@drawable/ic_phone"
-        app:left_text="管理语料库"
+        app:left_text="管理自定义话术"
         app:right_text="管理您设置的所有问答"
         />
-
     <com.ysk.turingv2.animation.ItemView
         android:id="@+id/pass"
         android:layout_marginTop="15dp"
@@ -100,8 +98,8 @@
         android:layout_width="wrap_content"
         android:layout_height="50dp"
         app:left_icon="@drawable/ic_phone"
-        app:left_text="自定义语料库"
-        app:right_text="设置专属聊天方式" />
+        app:left_text="自定义话术"
+        app:right_text="设置您喜欢的聊天内容" />
     <com.ysk.turingv2.animation.ItemView
         android:id="@+id/about"
         android:layout_width="wrap_content"

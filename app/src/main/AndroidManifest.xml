@@ -24,8 +24,8 @@
         android:theme="@style/AppTheme">
         <activity
             android:name=".Activity.LoginActivity"
-            android:launchMode="singleTask"
-            android:label="小可爱机器人">
+            android:label="小可爱机器人"
+            android:launchMode="singleTask">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -38,7 +38,8 @@
         <activity
             android:name=".Activity.RegistActivity"
             android:launchMode="singleTask" />
-        <activity android:name=".Activity.SettingActivity"></activity>
+        <activity android:name=".Activity.SettingActivity" />
+        <activity android:name=".Activity.ManageCustomActivity"></activity>
     </application>
 
 </manifest>

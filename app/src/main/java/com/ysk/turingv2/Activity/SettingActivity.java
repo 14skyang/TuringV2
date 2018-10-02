@@ -126,6 +126,10 @@ public class SettingActivity extends AppCompatActivity implements View.OnClickLi
             case R.id.robot_custom:
                 robotCustomDialog();
                 break;
+            case R.id.allcustom:
+                Intent intent =new Intent(SettingActivity.this,ManageCustomActivity.class);
+                startActivity(intent);
+                break;
             default:
                 break;
         }
