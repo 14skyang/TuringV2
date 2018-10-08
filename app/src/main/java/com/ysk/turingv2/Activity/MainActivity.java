@@ -639,7 +639,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     //自定义话术部分
     /**
-     * 检测数据库中是否存在该问题  ,此处查询不到符合的就会闪退？
+     * 检测数据库中是否存在该问题
      */
     public boolean checkQuestion(String question){ //有则返回true,没有就返回false
         List<Custom>customList= LitePal.where("sendtext=?",question).find(Custom.class);//只查询设置的发的消息

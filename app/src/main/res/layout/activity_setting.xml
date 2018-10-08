@@ -61,7 +61,7 @@
         android:id="@+id/nickName"
         android:layout_width="wrap_content"
         android:layout_height="50dp"
-        app:left_icon="@drawable/ic_nick_name"
+        app:left_icon="@drawable/ic_user"
         app:left_text="用户名"
         app:right_text="张三"
         />
@@ -79,9 +79,9 @@
         android:id="@+id/allcustom"
         android:layout_width="wrap_content"
         android:layout_height="50dp"
-        app:left_icon="@drawable/ic_phone"
+        app:left_icon="@drawable/ic_custom"
         app:left_text="管理自定义话术"
-        app:right_text="管理您设置的所有问答"
+        app:right_text="管理您设置的所有话术"
         />
     <com.ysk.turingv2.animation.ItemView
         android:id="@+id/pass"
@@ -90,16 +90,16 @@
         android:layout_height="50dp"
         app:left_icon="@drawable/ic_pass"
         app:left_text="修改密码"
-        app:right_text="修改您的登陆密码" />
+        app:right_text="修改登录密码" />
 
 
     <com.ysk.turingv2.animation.ItemView
         android:id="@+id/robot_custom"
         android:layout_width="wrap_content"
         android:layout_height="50dp"
-        app:left_icon="@drawable/ic_phone"
+        app:left_icon="@drawable/custom"
         app:left_text="自定义话术"
-        app:right_text="设置您喜欢的聊天内容" />
+        app:right_text="设置您喜欢的聊天话术" />
     <com.ysk.turingv2.animation.ItemView
         android:id="@+id/about"
         android:layout_width="wrap_content"

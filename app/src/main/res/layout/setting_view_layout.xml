@@ -13,7 +13,7 @@
         android:layout_alignParentLeft="true"
         android:layout_centerInParent="true"
         android:layout_marginLeft="15dp"
-        android:background="@drawable/ic_nick_name" />
+        android:background="@drawable/ic_user" />
 
     <TextView
         android:id="@+id/left_title"

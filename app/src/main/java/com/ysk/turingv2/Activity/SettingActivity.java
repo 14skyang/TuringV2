@@ -130,6 +130,9 @@ public class SettingActivity extends AppCompatActivity implements View.OnClickLi
                 Intent intent =new Intent(SettingActivity.this,ManageCustomActivity.class);
                 startActivity(intent);
                 break;
+            case R.id.about:
+                aboutDialog();
+                break;
             default:
                 break;
         }
@@ -220,7 +223,7 @@ public class SettingActivity extends AppCompatActivity implements View.OnClickLi
                     }else {
                         //保存问题和回复
                         SaveCustom(rQuestion,rAnswer);
-                        Toast.makeText(SettingActivity.this, "自定义语料库成功", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(SettingActivity.this, "自定义话术成功", Toast.LENGTH_SHORT).show();
                     }
                 }
             }
@@ -264,7 +267,7 @@ public class SettingActivity extends AppCompatActivity implements View.OnClickLi
                 }
                 if(rNewPass.equals(rConfirmPass)){
                     updatePass();
-                    Toast.makeText(SettingActivity.this, "密码修改成功,请重新登陆", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(SettingActivity.this, "密码修改成功,请重新登录", Toast.LENGTH_SHORT).show();
                     Intent intent = new Intent(SettingActivity.this, LoginActivity.class);
                     startActivity(intent);
                 }else{
@@ -282,7 +285,14 @@ public class SettingActivity extends AppCompatActivity implements View.OnClickLi
         });
         builder.show();
     }
-
+    //弹出关于对话框
+    private void aboutDialog(){
+        AlertDialog.Builder dialog = new AlertDialog.Builder(SettingActivity.this);
+        dialog.setTitle("关于本应用");
+        dialog.setMessage("现在有的功能有：图灵机器人的语义理解聊天，创建/管理自定义话术，打电话，打开应用，登陆，注册和修改密码");
+        dialog.setPositiveButton("确定",null);
+        dialog.show();
+    }
     /**
      * 更新数据库中的密码
      */
