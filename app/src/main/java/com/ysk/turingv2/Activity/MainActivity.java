@@ -34,6 +34,7 @@ import com.iflytek.cloud.SynthesizerListener;
 import com.iflytek.cloud.ui.RecognizerDialog;
 import com.iflytek.cloud.ui.RecognizerDialogListener;
 import com.ysk.turingv2.Action.CallAction;
+import com.ysk.turingv2.Action.NavigationAction;
 import com.ysk.turingv2.Action.OpenAppAction;
 import com.ysk.turingv2.R;
 import com.ysk.turingv2.adapter.RecyclerViewAdapter;
@@ -100,6 +101,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private HashMap<String, String> mIatResults = new LinkedHashMap<String , String>();
     //打开app
     private String appName;
+    //导航
+    private String dizhi;
     //打电话 发短信
     private String person;
     private String number;
@@ -188,10 +191,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
      * 加载列表布局数据
      */
     private void initData() {
-        addData("你好，我叫小可爱,你可以跟我聊天，也可以说：打开某某应用，打电话给某人", Chat.TYPE_RECEIVED,getCurrentTime());
+        addData("你好，我叫小可爱,你可以跟我聊天，也可以说：打开某某应用，打电话给某人,导航到某地", Chat.TYPE_RECEIVED,getCurrentTime());
         /*Chat c1 = new Chat("你好，我叫小可爱,你可以跟我聊天，也可以说：打开某某应用，打电话给某人", Chat.TYPE_RECEIVED,getCurrentTime());
         list.add(c1);*/
-        speakText("你好，我叫小可爱,你可以跟我聊天，也可以说：打开某某应用，打电话给某人");
+        speakText("你好，我叫小可爱,你可以跟我聊天，也可以说：打开某某应用，打电话给某人，导航到某地");
        /* Chat c2 = new Chat("你好，你现在会些什么呢？", Chat.TYPE_SENT);
         list.add(c2);*/
 
@@ -223,12 +226,14 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 //              2,判断是否为空
                 if (!TextUtils.isEmpty(text)) {
 //                  把要发送的数据添加到addData方法中，并把数据类型也填入，这里我们的类型是TYPE_SENT，发送数据类型
-                    addData(text, Chat.TYPE_SENT,getCurrentTime());
-                    saveSendData();//保存发送数据
-//                      清空输入框
-                    editText.setText("");
+                  /*  addData(text, Chat.TYPE_SENT,getCurrentTime());
+                    saveSendData();//保存发送数据*/
+
 //                  把发送的文本数据传递到request方法中，请求数据
-                    request(text);//图灵请求数据
+                    DoAction();
+                    //清空输入框
+                    editText.setText("");
+                    //request(text);//图灵请求数据
                     Log.e(TAG, "图灵请求文本："+text );
 
                 }
@@ -429,52 +434,63 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             for (String key : mIatResults.keySet()) {
                 resultBuffer.append(mIatResults .get(key));
             }
-            //现在有的问题是：讯飞识别后会识别出两个text,一个是文字，一个是单个标点符号，现在把标点符号一律换成a，去掉标点符号的text
-            if (text.contains("a")){
-                return;//如果text含有a,舍弃掉这个text，返回null到调用该方法的地方，下面的代码不会得到执行,而不含标点符号的text会执行下面的代码
-            } else if (checkQuestion(text)){
-                readCustom(text);
-                addData(text, Chat.TYPE_SENT,getCurrentTime());//装配语音文字到发送文本框
-                saveSendData();//保存发送的数据
-                addData(answer, Chat.TYPE_RECEIVED,getCurrentTime());//装配语音文字到接收文本框
-                mText=answer;
-               saveReceiveData();//保存接收的数据
-                speakText(answer);
-
-            } else if (text.contains("打开")){//打开app部分
-                int num = text.indexOf("打开");
-                appName = text.substring(num + 2, text.length());//截取打开后面的字符串
-                Log.e("appName", appName);
-                openAppByName();
-                addData(text, Chat.TYPE_SENT,getCurrentTime());//装配语音文字到发送文本框
-                saveSendData();//保存发送的数据
-
-            }else if (text.contains("打电话给")){
-                int num=text.indexOf("打电话给");
-                person=text.substring(num+4,text.length());//截取“打电话给”后面的字符串
-                 if (isNumeric(person)){//如果截取到的person字符串全是数字
-                   number=person;
-                 }
-                call();
-                addData(text,Chat.TYPE_SENT,getCurrentTime());//装配语音文字到发送文本框
-                saveSendData();//保存发送的数据
-                //初始化person和number
-                person=null;
-                number=null;
-            }
-
-            else{
-                request(text);//语音转文字过后发送图灵问答请求(resultBuffer.toString())
-                addData(text, Chat.TYPE_SENT,getCurrentTime());//装配语音文字到发送文本框
-                saveSendData();//保存发送的数据
-            }
+            DoAction();
 
 
         }
 
+
         @Override
         public void onError(SpeechError speechError) {
 
+        }
+    }
+    public void DoAction(){
+        //现在有的问题是：讯飞识别后会识别出两个text,一个是文字，一个是单个标点符号，现在把标点符号一律换成a，去掉标点符号的text
+        if (text.contains("a")){
+            return;//如果text含有a,舍弃掉这个text，返回null到调用该方法的地方，下面的代码不会得到执行,而不含标点符号的text会执行下面的代码
+        } else if (checkQuestion(text)){
+            readCustom(text);
+            addData(text, Chat.TYPE_SENT,getCurrentTime());//装配语音文字到发送文本框
+            saveSendData();//保存发送的数据
+            addData(answer, Chat.TYPE_RECEIVED,getCurrentTime());//装配语音文字到接收文本框
+            mText=answer;
+            saveReceiveData();//保存接收的数据
+            speakText(answer);
+
+        } else if (text.contains("打开")){//打开app部分
+            int num = text.indexOf("打开");
+            appName = text.substring(num + 2, text.length());//截取打开后面的字符串
+            Log.e("appName", appName);
+            openAppByName();
+            addData(text, Chat.TYPE_SENT,getCurrentTime());//装配语音文字到发送文本框
+            saveSendData();//保存发送的数据
+
+        }else if (text.contains("打电话给")){
+            int num=text.indexOf("打电话给");
+            person=text.substring(num+4,text.length());//截取“打电话给”后面的字符串
+            if (isNumeric(person)){//如果截取到的person字符串全是数字
+                number=person;
+            }
+            call();
+            addData(text,Chat.TYPE_SENT,getCurrentTime());//装配语音文字到发送文本框
+            saveSendData();//保存发送的数据
+            //初始化person和number
+            person=null;
+            number=null;
+        }else if(text.contains("导航到")){
+            int num=text.indexOf("导航到");
+            dizhi=text.substring(num+3,text.length());
+            setNavigation();
+            addData(text,Chat.TYPE_SENT,getCurrentTime());
+            saveSendData();
+
+        }
+
+        else{
+            request(text);//语音转文字过后发送图灵问答请求(resultBuffer.toString())
+            addData(text, Chat.TYPE_SENT,getCurrentTime());//装配语音文字到发送文本框
+            saveSendData();//保存发送的数据
         }
     }
 
@@ -574,6 +590,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private void openAppByName(){
         OpenAppAction openAppAction = new OpenAppAction(MainActivity.this, appName);
         openAppAction.start();
+    }
+    /*
+    **用于打开高德导航
+     */
+    private void setNavigation(){
+        NavigationAction navigationAction=new NavigationAction(MainActivity.this,dizhi);
+        navigationAction.start();
     }
     /*
     *用于打电话

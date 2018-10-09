@@ -30,7 +30,7 @@ public class OpenAppAction {
             launchAppByName();
         }else {
             mActivity.addData("至少应该告诉我应用名称吧^_^", Chat.TYPE_RECEIVED,mActivity.getCurrentTime());//机器人说的话添加到接收文本框里
-            //mActivity.answerText.setText("至少应该告诉我应用名称吧^_^");
+            mActivity.speakText("至少应该告诉我应用名称吧");
         }
     }
 
