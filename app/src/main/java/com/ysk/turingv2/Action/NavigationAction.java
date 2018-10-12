@@ -76,6 +76,7 @@ public class NavigationAction {
         try {
             Intent intent = Intent.getIntentOld("androidamap://route?sourceApplication=softname&sname=我的位置&dlat="+latitude+"&dlon="+longitude+"&dname="+dizhi+"&dev=0&m=0&t=0");//其中t=0是驾车，
             //直接写入参数 我的位置 就可以了，这样进入高德或者百度地图app中直接就给定位了获取到当前位置了。不用在自己的项目中通过sdk获取到当前位置的坐标然后传入参数
+            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);//有这两行就可以实现app任意打开N多次
             if(isInstallByread("com.autonavi.minimap")){
                 mActivity.startActivity(intent);
                 Log.e(TAG, "高德地图客户端已经安装") ;
